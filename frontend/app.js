@@ -1,4 +1,4 @@
-const API = 'http://localhost:5000/api';
+const API = 'https://complaint-management-system-production-198f.up.railway.app/api';
 
 async function handleLogin() {
     const email = document.getElementById('email').value;
