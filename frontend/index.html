@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UniComplain — University Complaint System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root[data-theme="dark"] {
+            --bg: #0a0a0a;
+            --bg2: #111111;
+            --surface: #1a1a1a;
+            --border: #2a2a2a;
+            --text: #f0ece4;
+            --text-muted: #6b6b6b;
+            --accent: #e8d5b0;
+            --accent2: #c4a882;
+            --btn-text: #0a0a0a;
+        }
+        :root[data-theme="light"] {
+            --bg: #f5f2ec;
+            --bg2: #ece8e0;
+            --surface: #ffffff;
+            --border: #d8d3c8;
+            --text: #1a1a1a;
+            --text-muted: #8a8070;
+            --accent: #2a2a2a;
+            --accent2: #5a4a3a;
+            --btn-text: #f5f2ec;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background 0.4s, color 0.4s;
+        }
+
+        /* Grain overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0.4;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 28px 60px;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            background: var(--bg);
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: var(--text);
+        }
+
+        .logo span { color: var(--accent2); }
+
+        .theme-toggle {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 8px 18px;
+            border-radius: 100px;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            transition: all 0.3s;
+        }
+
+        .theme-toggle:hover {
+            background: var(--accent);
+            color: var(--btn-text);
+            border-color: var(--accent);
+        }
+
+        .hero {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: calc(100vh - 81px);
+            padding: 0 60px;
+        }
+
+        .hero-left {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 80px 60px 80px 0;
+            border-right: 1px solid var(--border);
+        }
+
+        .eyebrow {
+            font-size: 11px;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 28px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .eyebrow::before {
+            content: '';
+            width: 32px;
+            height: 1px;
+            background: var(--text-muted);
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3rem, 5vw, 5.5rem);
+            font-weight: 900;
+            line-height: 0.95;
+            letter-spacing: -0.03em;
+            margin-bottom: 32px;
+        }
+
+        h1 em {
+            font-style: italic;
+            color: var(--accent2);
+        }
+
+        .hero-desc {
+            font-size: 16px;
+            line-height: 1.7;
+            color: var(--text-muted);
+            max-width: 420px;
+            margin-bottom: 56px;
+            font-weight: 300;
+        }
+
+        .login-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 380px;
+        }
+
+        .login-btn {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px 24px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            text-decoration: none;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            transition: all 0.3s;
+            background: var(--surface);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-btn::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: var(--accent);
+            transform: scaleY(0);
+            transition: transform 0.3s;
+        }
+
+        .login-btn:hover::before { transform: scaleY(1); }
+
+        .login-btn:hover {
+            border-color: var(--accent);
+            transform: translateX(4px);
+        }
+
+        .login-btn.primary {
+            background: var(--accent);
+            color: var(--btn-text);
+            border-color: var(--accent);
+            font-weight: 600;
+        }
+
+        .login-btn.primary::before { background: var(--bg); }
+        .login-btn.primary:hover { opacity: 0.9; transform: translateX(4px); }
+
+        .btn-arrow { font-size: 18px; transition: transform 0.3s; }
+        .login-btn:hover .btn-arrow { transform: translateX(4px); }
+
+        .hero-right {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 80px 0 80px 60px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+            margin-bottom: 40px;
+        }
+
+        .stat {
+            background: var(--bg);
+            padding: 36px 32px;
+            transition: background 0.3s;
+        }
+
+        .stat:hover { background: var(--surface); }
+
+        .stat-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--text-muted);
+        }
+
+        .features {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            border: 1px solid var(--border);
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.3s;
+        }
+
+        .feature:last-child { border-bottom: none; }
+        .feature:hover { background: var(--surface); }
+
+        .feature-icon {
+            width: 36px;
+            height: 36px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .feature-text {
+            font-size: 13px;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        .feature-text strong {
+            display: block;
+            color: var(--text);
+            font-weight: 500;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 24px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        footer p {
+            font-size: 12px;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+        }
+
+        /* Animations */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-left > * {
+            animation: fadeUp 0.6s ease forwards;
+            opacity: 0;
+        }
+
+        .eyebrow { animation-delay: 0.1s; }
+        h1 { animation-delay: 0.2s; }
+        .hero-desc { animation-delay: 0.3s; }
+        .login-buttons { animation-delay: 0.4s; }
+
+        @media (max-width: 768px) {
+            nav { padding: 20px 24px; }
+            .hero { grid-template-columns: 1fr; padding: 0 24px; }
+            .hero-left { border-right: none; border-bottom: 1px solid var(--border); padding: 60px 0; }
+            .hero-right { padding: 40px 0; }
+            footer { padding: 20px 24px; flex-direction: column; gap: 8px; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">Uni<span>Complain</span></div>
+        <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">☀ Light Mode</button>
+    </nav>
+
+    <div class="hero">
+        <div class="hero-left">
+            <div class="eyebrow">University Grievance Portal</div>
+            <h1>Your Voice,<br><em>Heard.</em></h1>
+            <p class="hero-desc">A streamlined system for students to raise concerns and for faculty to resolve them — transparently and efficiently.</p>
+            <div class="login-buttons">
+                <a href="login.html?role=student" class="login-btn primary">
+                    <span>Student Portal</span>
+                    <span class="btn-arrow">→</span>
+                </a>
+                <a href="login.html?role=teacher" class="login-btn">
+                    <span>Faculty Access</span>
+                    <span class="btn-arrow">→</span>
+                </a>
+                <a href="login.html?role=admin" class="login-btn">
+                    <span>Admin Console</span>
+                    <span class="btn-arrow">→</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="hero-right">
+            <div class="stats-grid">
+                <div class="stat">
+                    <div class="stat-num">3</div>
+                    <div class="stat-label">User Roles</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num">5</div>
+                    <div class="stat-label">Categories</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num">JWT</div>
+                    <div class="stat-label">Auth System</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-num">24/7</div>
+                    <div class="stat-label">Availability</div>
+                </div>
+            </div>
+
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">📝</div>
+                    <div class="feature-text">
+                        <strong>Submit Complaints</strong>
+                        Academic, Hostel, Infrastructure & more
+                    </div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">📊</div>
+                    <div class="feature-text">
+                        <strong>Track Status</strong>
+                        Real-time updates from Pending to Resolved
+                    </div>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🔒</div>
+                    <div class="feature-text">
+                        <strong>Secure & Private</strong>
+                        JWT authentication with role-based access
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2026 UniComplain — University Complaint Management System</p>
+        <p>Built with Node.js · Express · MongoDB</p>
+    </footer>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const btn = document.getElementById('themeBtn');
+            if (html.getAttribute('data-theme') === 'dark') {
+                html.setAttribute('data-theme', 'light');
+                btn.textContent = '☾ Dark Mode';
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                btn.textContent = '☀ Light Mode';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        const saved = localStorage.getItem('theme');
+        if (saved) {
+            document.documentElement.setAttribute('data-theme', saved);
+            document.getElementById('themeBtn').textContent = saved === 'light' ? '☾ Dark Mode' : '☀ Light Mode';
+        }
+    </script>
+</body>
+</html>

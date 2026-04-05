@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — UniComplain</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root[data-theme="dark"] {
+            --bg: #0a0a0a;
+            --bg2: #111111;
+            --surface: #1a1a1a;
+            --border: #2a2a2a;
+            --text: #f0ece4;
+            --text-muted: #6b6b6b;
+            --accent: #e8d5b0;
+            --accent2: #c4a882;
+            --btn-text: #0a0a0a;
+            --input-bg: #111111;
+            --pending-bg: #2a2010;
+            --pending-text: #c4a050;
+            --resolved-bg: #0f2a1a;
+            --resolved-text: #50c480;
+            --progress-bg: #10202a;
+            --progress-text: #5090c4;
+        }
+        :root[data-theme="light"] {
+            --bg: #f5f2ec;
+            --bg2: #ece8e0;
+            --surface: #ffffff;
+            --border: #d8d3c8;
+            --text: #1a1a1a;
+            --text-muted: #8a8070;
+            --accent: #2a2a2a;
+            --accent2: #5a4a3a;
+            --btn-text: #f5f2ec;
+            --input-bg: #f5f2ec;
+            --pending-bg: #fdf3dc;
+            --pending-text: #9a6a10;
+            --resolved-bg: #dcf5e8;
+            --resolved-text: #1a7a40;
+            --progress-bg: #dceeff;
+            --progress-text: #1a50a0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            min-height: 100vh;
+            transition: background 0.4s, color 0.4s;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0.4;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 48px;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .logo span { color: var(--accent2); }
+
+        .nav-right { display: flex; align-items: center; gap: 16px; }
+
+        .role-badge {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            padding: 6px 14px;
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            color: var(--text-muted);
+        }
+
+        .theme-toggle, .logout-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .theme-toggle:hover, .logout-btn:hover {
+            background: var(--accent);
+            color: var(--btn-text);
+            border-color: var(--accent);
+        }
+
+        .main {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            min-height: calc(100vh - 65px);
+        }
+
+        .sidebar {
+            border-right: 1px solid var(--border);
+            padding: 40px 32px;
+        }
+
+        .sidebar-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .form-group { margin-bottom: 20px; }
+
+        label {
+            display: block;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 14px;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus { border-color: var(--accent2); }
+        input::placeholder, textarea::placeholder { color: var(--text-muted); }
+
+        select option { background: var(--surface); }
+
+        textarea { resize: vertical; min-height: 100px; }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--accent);
+            color: var(--btn-text);
+            border: none;
+            border-radius: 4px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 8px;
+        }
+
+        .submit-btn:hover { opacity: 0.85; }
+
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 32px 0;
+        }
+
+        .content { padding: 40px 48px; }
+
+        .content-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 32px;
+        }
+
+        .content-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .count {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .complaint-card {
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 24px;
+            margin-bottom: 12px;
+            background: var(--surface);
+            transition: all 0.3s;
+            animation: fadeUp 0.4s ease forwards;
+            opacity: 0;
+        }
+
+        .complaint-card:hover {
+            border-color: var(--accent2);
+            transform: translateY(-1px);
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .card-subject {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .badge {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 4px 12px;
+            border-radius: 100px;
+        }
+
+        .badge-pending { background: var(--pending-bg); color: var(--pending-text); }
+        .badge-resolved { background: var(--resolved-bg); color: var(--resolved-text); }
+        .badge-in { background: var(--progress-bg); color: var(--progress-text); }
+
+        .card-meta {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .card-desc {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .action-btn {
+            padding: 7px 16px;
+            border-radius: 4px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 0.04em;
+        }
+
+        .btn-resolve {
+            background: var(--resolved-bg);
+            color: var(--resolved-text);
+            border: 1px solid transparent;
+        }
+
+        .btn-resolve:hover { border-color: var(--resolved-text); }
+
+        .btn-progress {
+            background: var(--progress-bg);
+            color: var(--progress-text);
+            border: 1px solid transparent;
+        }
+
+        .btn-progress:hover { border-color: var(--progress-text); }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 40px;
+            color: var(--text-muted);
+            border: 1px dashed var(--border);
+            border-radius: 4px;
+        }
+
+        .empty-state p { font-size: 14px; margin-top: 8px; font-weight: 300; }
+        .empty-icon { font-size: 2.5rem; margin-bottom: 12px; }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 768px) {
+            nav { padding: 16px 24px; }
+            .main { grid-template-columns: 1fr; }
+            .sidebar { border-right: none; border-bottom: 1px solid var(--border); }
+            .content { padding: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">Uni<span>Complain</span></div>
+        <div class="nav-right">
+            <span class="role-badge" id="role-badge">Student</span>
+            <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">☀</button>
+            <a href="index.html" class="logout-btn" onclick="localStorage.clear()">Logout</a>
+        </div>
+    </nav>
+
+    <div class="main">
+        <!-- Student Sidebar -->
+        <div class="sidebar" id="student-sidebar">
+            <div class="sidebar-title">New Complaint</div>
+            <div class="form-group">
+                <label>Category</label>
+                <select id="category">
+                    <option>Academic</option>
+                    <option>Hostel</option>
+                    <option>Infrastructure</option>
+                    <option>Administration</option>
+                    <option>Other</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Subject</label>
+                <input type="text" id="subject" placeholder="Brief subject">
+            </div>
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="description" placeholder="Describe your complaint in detail..."></textarea>
+            </div>
+            <button class="submit-btn" onclick="submitComplaint()">Submit Complaint →</button>
+        </div>
+
+        <!-- Admin Sidebar (hidden by default) -->
+        <div class="sidebar" id="admin-sidebar" style="display:none;">
+            <div class="sidebar-title">Overview</div>
+            <div style="display:flex;flex-direction:column;gap:16px;">
+                <div style="padding:20px;border:1px solid var(--border);border-radius:4px;">
+                    <div style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;" id="total-count">0</div>
+                    <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-top:4px;">Total Complaints</div>
+                </div>
+                <div style="padding:20px;border:1px solid var(--border);border-radius:4px;">
+                    <div style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:var(--pending-text);" id="pending-count">0</div>
+                    <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-top:4px;">Pending</div>
+                </div>
+                <div style="padding:20px;border:1px solid var(--border);border-radius:4px;">
+                    <div style="font-family:'Playfair Display',serif;font-size:2rem;font-weight:700;color:var(--resolved-text);" id="resolved-count">0</div>
+                    <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-top:4px;">Resolved</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="content-header">
+                <h2 id="content-title">My Complaints</h2>
+                <span class="count" id="complaint-count">0 complaints</span>
+            </div>
+            <div id="complaints-list"></div>
+        </div>
+    </div>
+
+    <script>
+        const API = 'http://localhost:5000/api';
+        const token = localStorage.getItem('token');
+        const role = localStorage.getItem('role') || 'student';
+
+        if (!token) window.location.href = 'index.html';
+
+        document.getElementById('role-badge').textContent = role.charAt(0).toUpperCase() + role.slice(1);
+
+        if (role === 'admin' || role === 'teacher') {
+            document.getElementById('student-sidebar').style.display = 'none';
+            document.getElementById('admin-sidebar').style.display = 'block';
+            document.getElementById('content-title').textContent = 'All Complaints';
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            const btn = document.getElementById('themeBtn');
+            const newTheme = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            btn.textContent = newTheme === 'light' ? '☾' : '☀';
+            localStorage.setItem('theme', newTheme);
+        }
+
+        const saved = localStorage.getItem('theme');
+        if (saved) {
+            document.documentElement.setAttribute('data-theme', saved);
+            document.getElementById('themeBtn').textContent = saved === 'light' ? '☾' : '☀';
+        }
+
+        async function submitComplaint() {
+            const subject = document.getElementById('subject').value;
+            const description = document.getElementById('description').value;
+            const category = document.getElementById('category').value;
+            if (!subject || !description) { alert('Please fill all fields'); return; }
+
+            const res = await fetch(`${API}/complaints`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ subject, description, category })
+            });
+
+            if (res.ok) {
+                document.getElementById('subject').value = '';
+                document.getElementById('description').value = '';
+                renderComplaints();
+            } else { alert('Failed to submit'); }
+        }
+
+        async function updateStatus(id, status) {
+            await fetch(`${API}/complaints/${id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ status })
+            });
+            renderComplaints();
+        }
+
+        async function renderComplaints() {
+            const res = await fetch(`${API}/complaints`, {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            const complaints = await res.json();
+            const list = document.getElementById('complaints-list');
+            document.getElementById('complaint-count').textContent = `${complaints.length} complaint${complaints.length !== 1 ? 's' : ''}`;
+
+            if (role === 'admin' || role === 'teacher') {
+                document.getElementById('total-count').textContent = complaints.length;
+                document.getElementById('pending-count').textContent = complaints.filter(c => c.status === 'Pending').length;
+                document.getElementById('resolved-count').textContent = complaints.filter(c => c.status === 'Resolved').length;
+            }
+
+            if (complaints.length === 0) {
+                list.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><strong>No complaints yet</strong><p>${role === 'student' ? 'Submit your first complaint using the form.' : 'No complaints have been submitted yet.'}</p></div>`;
+                return;
+            }
+
+            list.innerHTML = complaints.map((c, i) => `
+                <div class="complaint-card" style="animation-delay:${i * 0.05}s">
+                    <div class="card-top">
+                        <div class="card-subject">${c.subject}</div>
+                        <span class="badge badge-${c.status.toLowerCase().replace(' ', '-').split(' ')[0]}">${c.status}</span>
+                    </div>
+                    <div class="card-meta">${c.category} · ${new Date(c.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</div>
+                    <div class="card-desc">${c.description}</div>
+                    ${(role === 'admin' || role === 'teacher') ? `
+                    <div class="card-actions">
+                        <button class="action-btn btn-resolve" onclick="updateStatus('${c._id}', 'Resolved')">✓ Mark Resolved</button>
+                        <button class="action-btn btn-progress" onclick="updateStatus('${c._id}', 'In Progress')">↻ In Progress</button>
+                    </div>` : ''}
+                </div>`).join('');
+        }
+
+        renderComplaints();
+    </script>
+</body>
+</html>
