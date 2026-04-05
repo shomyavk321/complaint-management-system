@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login — UniComplain</title>
+    <title>Sign Up — UniComplain</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         :root[data-theme="dark"] {
@@ -16,7 +16,6 @@
             --accent2: #c4a882;
             --btn-text: #0a0a0a;
             --input-bg: #111111;
-            --error: #e07070;
         }
         :root[data-theme="light"] {
             --bg: #f5f2ec;
@@ -28,7 +27,6 @@
             --accent2: #5a4a3a;
             --btn-text: #f5f2ec;
             --input-bg: #f5f2ec;
-            --error: #c0392b;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -66,8 +64,8 @@
         .left-panel::after {
             content: '';
             position: absolute;
-            bottom: -100px;
-            left: -100px;
+            top: -100px;
+            right: -100px;
             width: 400px;
             height: 400px;
             background: radial-gradient(circle, var(--accent2) 0%, transparent 70%);
@@ -84,19 +82,8 @@
         }
 
         .logo span { color: var(--accent2); }
-        .left-content { flex: 1; display: flex; flex-direction: column; justify-content: center; }
 
-        .role-indicator {
-            display: inline-block;
-            font-size: 11px;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            color: var(--text-muted);
-            border: 1px solid var(--border);
-            padding: 6px 14px;
-            border-radius: 100px;
-            margin-bottom: 32px;
-        }
+        .left-content { flex: 1; display: flex; flex-direction: column; justify-content: center; }
 
         .left-content h2 {
             font-family: 'Playfair Display', serif;
@@ -115,6 +102,36 @@
             line-height: 1.7;
             font-weight: 300;
             max-width: 360px;
+            margin-bottom: 32px;
+        }
+
+        .steps {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .step-num {
+            width: 28px;
+            height: 28px;
+            border: 1px solid var(--border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 600;
+            flex-shrink: 0;
+            color: var(--accent2);
+            border-color: var(--accent2);
         }
 
         .left-footer {
@@ -129,15 +146,13 @@
             flex-direction: column;
             justify-content: center;
             padding: 48px 80px;
+            position: relative;
         }
 
         .top-bar {
             position: absolute;
             top: 48px;
             right: 60px;
-            display: flex;
-            gap: 16px;
-            align-items: center;
         }
 
         .theme-toggle {
@@ -158,7 +173,7 @@
             border-color: var(--accent);
         }
 
-        .form-header { margin-bottom: 48px; }
+        .form-header { margin-bottom: 36px; }
 
         .form-header h3 {
             font-family: 'Playfair Display', serif;
@@ -170,7 +185,7 @@
 
         .form-header p { font-size: 14px; color: var(--text-muted); }
 
-        .form-group { margin-bottom: 24px; }
+        .form-group { margin-bottom: 20px; }
 
         label {
             display: block;
@@ -178,11 +193,11 @@
             text-transform: uppercase;
             letter-spacing: 0.12em;
             color: var(--text-muted);
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             font-weight: 500;
         }
 
-        input {
+        input, select {
             width: 100%;
             padding: 14px 18px;
             background: var(--input-bg);
@@ -191,13 +206,13 @@
             color: var(--text);
             font-family: 'DM Sans', sans-serif;
             font-size: 15px;
-            font-weight: 400;
             outline: none;
             transition: border-color 0.3s;
         }
 
-        input:focus { border-color: var(--accent2); }
+        input:focus, select:focus { border-color: var(--accent2); }
         input::placeholder { color: var(--text-muted); }
+        select option { background: var(--surface); }
 
         .submit-btn {
             width: 100%;
@@ -214,26 +229,43 @@
             cursor: pointer;
             transition: all 0.3s;
             margin-top: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
         }
 
         .submit-btn:hover { opacity: 0.85; transform: translateY(-1px); }
-        .submit-btn:active { transform: translateY(0); }
 
-        .back-link {
+        .login-link {
             display: block;
             text-align: center;
-            margin-top: 24px;
+            margin-top: 20px;
             font-size: 13px;
             color: var(--text-muted);
             text-decoration: none;
-            transition: color 0.3s;
         }
 
-        .back-link:hover { color: var(--text); }
+        .login-link a { color: var(--accent2); text-decoration: none; }
+        .login-link a:hover { text-decoration: underline; }
+
+        .error-msg {
+            background: #2a1010;
+            color: #e07070;
+            border: 1px solid #4a2020;
+            padding: 12px 16px;
+            border-radius: 4px;
+            font-size: 13px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .success-msg {
+            background: #0f2a1a;
+            color: #50c480;
+            border: 1px solid #1a4a2a;
+            padding: 12px 16px;
+            border-radius: 4px;
+            font-size: 13px;
+            margin-bottom: 20px;
+            display: none;
+        }
 
         @keyframes fadeUp {
             from { opacity: 0; transform: translateY(20px); }
@@ -246,10 +278,8 @@
         }
 
         .form-header { animation-delay: 0.1s; }
-        .form-group:nth-child(1) { animation-delay: 0.2s; }
-        .form-group:nth-child(2) { animation-delay: 0.25s; }
+        .form-group { animation-delay: 0.2s; }
         .submit-btn { animation-delay: 0.3s; }
-        .back-link { animation-delay: 0.35s; }
 
         @media (max-width: 768px) {
             body { grid-template-columns: 1fr; }
@@ -263,9 +293,22 @@
     <div class="left-panel">
         <a href="index.html" class="logo">Uni<span>Complain</span></a>
         <div class="left-content">
-            <span class="role-indicator" id="role-label">Student Portal</span>
-            <h2>Welcome<br><em>Back.</em></h2>
-            <p>Sign in to access your dashboard, submit complaints, and track their resolution status.</p>
+            <h2>Join<br><em>Today.</em></h2>
+            <p>Create your account to start submitting complaints and tracking their resolution in real time.</p>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-num">1</div>
+                    <span>Create your account with your university email</span>
+                </div>
+                <div class="step">
+                    <div class="step-num">2</div>
+                    <span>Select your role — Student, Teacher or Admin</span>
+                </div>
+                <div class="step">
+                    <div class="step-num">3</div>
+                    <span>Submit and track complaints instantly</span>
+                </div>
+            </div>
         </div>
         <div class="left-footer">
             <span>© 2026 UniComplain</span>
@@ -278,8 +321,14 @@
             <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">☀ Light</button>
         </div>
         <div class="form-header">
-            <h3 id="login-title">Sign In</h3>
-            <p>Enter your credentials to continue</p>
+            <h3>Create Account</h3>
+            <p>Fill in your details to get started</p>
+        </div>
+        <div id="error-msg" class="error-msg"></div>
+        <div id="success-msg" class="success-msg"></div>
+        <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="name" placeholder="Your full name">
         </div>
         <div class="form-group">
             <label>Email Address</label>
@@ -287,37 +336,81 @@
         </div>
         <div class="form-group">
             <label>Password</label>
-            <input type="password" id="password" placeholder="••••••••">
+            <input type="password" id="password" placeholder="Min. 6 characters">
         </div>
-        <button class="submit-btn" onclick="handleLogin()">
-            Continue <span>→</span>
-        </button>
-        <a href="index.html" class="back-link">← Back to Home</a>
-        <p style="text-align:center;margin-top:16px;font-size:13px;color:var(--text-muted);">
-            New user? <a href="signup.html" style="color:var(--accent2);text-decoration:none;">Create account</a>
-        </p>
+        <div class="form-group">
+            <label>Role</label>
+            <select id="role">
+                <option value="student">Student</option>
+                <option value="teacher">Teacher</option>
+                <option value="admin">Admin</option>
+            </select>
+        </div>
+        <button class="submit-btn" onclick="handleSignup()">Create Account →</button>
+        <p class="login-link">Already have an account? <a href="login.html">Sign in</a></p>
     </div>
 
-    <script src="app.js"></script>
     <script>
-        const params = new URLSearchParams(window.location.search);
-        const role = params.get('role') || 'student';
-        const roleNames = { student: 'Student Portal', teacher: 'Faculty Access', admin: 'Admin Console' };
-        document.getElementById('role-label').textContent = roleNames[role] || 'Portal';
-        document.getElementById('login-title').textContent = 'Sign In';
+        const API = 'https://complaint-management-system-production-198f.up.railway.app/api';
+
+        async function handleSignup() {
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const role = document.getElementById('role').value;
+            const errorEl = document.getElementById('error-msg');
+            const successEl = document.getElementById('success-msg');
+
+            errorEl.style.display = 'none';
+            successEl.style.display = 'none';
+
+            if (!name || !email || !password) {
+                errorEl.textContent = 'Please fill in all fields.';
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            if (password.length < 6) {
+                errorEl.textContent = 'Password must be at least 6 characters.';
+                errorEl.style.display = 'block';
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API}/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password, role })
+                });
+
+                const data = await res.json();
+
+                if (!res.ok) {
+                    errorEl.textContent = data.message || 'Registration failed.';
+                    errorEl.style.display = 'block';
+                    return;
+                }
+
+                successEl.textContent = 'Account created! Redirecting to login...';
+                successEl.style.display = 'block';
+
+                setTimeout(() => {
+                    window.location.href = `login.html?role=${role}`;
+                }, 1500);
+
+            } catch (err) {
+                errorEl.textContent = 'Server not reachable. Try again later.';
+                errorEl.style.display = 'block';
+            }
+        }
 
         function toggleTheme() {
             const html = document.documentElement;
             const btn = document.getElementById('themeBtn');
-            if (html.getAttribute('data-theme') === 'dark') {
-                html.setAttribute('data-theme', 'light');
-                btn.textContent = '☾ Dark';
-                localStorage.setItem('theme', 'light');
-            } else {
-                html.setAttribute('data-theme', 'dark');
-                btn.textContent = '☀ Light';
-                localStorage.setItem('theme', 'dark');
-            }
+            const newTheme = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            btn.textContent = newTheme === 'light' ? '☾ Dark' : '☀ Light';
+            localStorage.setItem('theme', newTheme);
         }
 
         const saved = localStorage.getItem('theme');
