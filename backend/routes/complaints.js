@@ -43,5 +43,14 @@ router.patch('/:id', auth, async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 });
+router.delete('/:id', auth, async (req, res) => {
+    try {
+        if (req.user.role === 'student') return res.status(403).json({ message: 'Access denied' });
+        await Complaint.findByIdAndDelete(req.params.id);
+        res.json({ message: 'Complaint deleted' });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
 
 module.exports = router;
