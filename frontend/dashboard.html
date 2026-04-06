@@ -293,6 +293,12 @@
         }
         .btn-delete:hover { border-color: #e07070; }
 
+        .filter-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 28px 0;
+        }
+
         .empty-state {
             text-align: center;
             padding: 80px 40px;
@@ -367,6 +373,18 @@
                     <div style="font-size:12px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-top:4px;">Resolved</div>
                 </div>
             </div>
+
+            <div class="filter-divider"></div>
+
+            <div class="sidebar-title">Filter by Category</div>
+            <select id="filter-category" onchange="renderComplaints()">
+                <option value="all">All Categories</option>
+                <option value="Academic">Academic</option>
+                <option value="Hostel">Hostel</option>
+                <option value="Infrastructure">Infrastructure</option>
+                <option value="Administration">Administration</option>
+                <option value="Other">Other</option>
+            </select>
         </div>
 
         <div class="content">
@@ -379,7 +397,7 @@
     </div>
 
     <script>
-        // v3 - with delete feature
+        // v4 - with filter feature
         const API = 'https://complaint-management-system-production-198f.up.railway.app/api';
         const token = localStorage.getItem('token');
         const role = localStorage.getItem('role') || 'student';
@@ -451,21 +469,27 @@
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             const complaints = await res.json();
+
+            const filterEl = document.getElementById('filter-category');
+            const filtered = filterEl && filterEl.value !== 'all'
+                ? complaints.filter(c => c.category === filterEl.value)
+                : complaints;
+
             const list = document.getElementById('complaints-list');
-            document.getElementById('complaint-count').textContent = `${complaints.length} complaint${complaints.length !== 1 ? 's' : ''}`;
+            document.getElementById('complaint-count').textContent = `${filtered.length} complaint${filtered.length !== 1 ? 's' : ''}`;
 
             if (role === 'admin' || role === 'teacher') {
-                document.getElementById('total-count').textContent = complaints.length;
-                document.getElementById('pending-count').textContent = complaints.filter(c => c.status === 'Pending').length;
-                document.getElementById('resolved-count').textContent = complaints.filter(c => c.status === 'Resolved').length;
+                document.getElementById('total-count').textContent = filtered.length;
+                document.getElementById('pending-count').textContent = filtered.filter(c => c.status === 'Pending').length;
+                document.getElementById('resolved-count').textContent = filtered.filter(c => c.status === 'Resolved').length;
             }
 
-            if (complaints.length === 0) {
-                list.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><strong>No complaints yet</strong><p>${role === 'student' ? 'Submit your first complaint using the form.' : 'No complaints have been submitted yet.'}</p></div>`;
+            if (filtered.length === 0) {
+                list.innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><strong>No complaints found</strong><p>${role === 'student' ? 'Submit your first complaint using the form.' : 'No complaints match the selected filter.'}</p></div>`;
                 return;
             }
 
-            list.innerHTML = complaints.map((c, i) => `
+            list.innerHTML = filtered.map((c, i) => `
                 <div class="complaint-card" style="animation-delay:${i * 0.05}s">
                     <div class="card-top">
                         <div class="card-subject">${c.subject}</div>
